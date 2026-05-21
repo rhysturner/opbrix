@@ -14,6 +14,9 @@
     'CTA_Text',
     'Image_URL',
   ];
+  const BASE_PADDING_RATIO = 0.06;
+  const WIDE_ASPECT_THRESHOLD = 2;
+  const TALL_ASPECT_THRESHOLD = 1.5;
 
   function parseCsv(csvInput) {
     if (typeof csvInput !== 'string' || csvInput.trim() === '') {
@@ -37,7 +40,10 @@
       return acc;
     }, {});
 
-    return matrix.slice(1).filter((row) => row.some((cell) => String(cell || '').trim() !== '')).map((row, rowIndex) => {
+    const dataRows = matrix.slice(1);
+    const nonEmptyRows = dataRows.filter((row) => row.some((cell) => String(cell || '').trim() !== ''));
+
+    return nonEmptyRows.map((row, rowIndex) => {
       const record = REQUIRED_COLUMNS.reduce((acc, column) => {
         const rawValue = row[headerIndex[column]];
         acc[column] = typeof rawValue === 'string' ? rawValue.trim() : String(rawValue || '').trim();
@@ -249,9 +255,9 @@
   }
 
   function calculateAdaptiveLayout(width, height) {
-    const padding = Math.max(12, Math.round(Math.min(width, height) * 0.06));
-    const isWide = width / height >= 2;
-    const isTall = height / width >= 1.5;
+    const padding = Math.max(12, Math.round(Math.min(width, height) * BASE_PADDING_RATIO));
+    const isWide = width / height >= WIDE_ASPECT_THRESHOLD;
+    const isTall = height / width >= TALL_ASPECT_THRESHOLD;
 
     if (isWide) {
       const textWidth = Math.max(120, Math.round(width * 0.58) - padding * 2);
