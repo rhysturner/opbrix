@@ -6,15 +6,15 @@ This repository now includes a minimal Penpot plugin scaffold for generating ad 
 
 ### Files
 
-- `/home/runner/work/opbrix/opbrix/penpot-plugin/banner-ad-adaptation.js`
+- `penpot-plugin/banner-ad-adaptation.js`
   - Core utility logic for:
     - CSV parsing (`Variant_Name,Width,Height,Headline,Subheadline,CTA_Text,Image_URL`)
     - Board creation (`[Variant_Name] - [Width]x[Height]`)
     - Adaptive placement for background, text, CTA, and image/placeholder layers
     - Penpot API adapter and plugin panel message handling
-- `/home/runner/work/opbrix/opbrix/penpot-plugin/panel.html`
+- `penpot-plugin/panel.html`
   - Plugin panel UI with CSV upload, text area, and **Generate Layouts** button.
-- `/home/runner/work/opbrix/opbrix/penpot-plugin/banner-ad-adaptation.test.js`
+- `penpot-plugin/banner-ad-adaptation.test.js`
   - Focused Node tests for parsing and board generation behavior.
 
 ### Example plugin usage
