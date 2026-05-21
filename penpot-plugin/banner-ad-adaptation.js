@@ -419,7 +419,9 @@
   }
 
   function registerPluginMessageHandlers(pluginApi, uiApi) {
-    const resolvedPluginApi = pluginApi || (typeof penpot !== 'undefined' ? penpot : null);
+    const globalPenpot =
+      typeof globalThis !== 'undefined' && typeof globalThis.penpot !== 'undefined' ? globalThis.penpot : null;
+    const resolvedPluginApi = pluginApi || globalPenpot;
     const resolvedUiApi = uiApi || (resolvedPluginApi && resolvedPluginApi.ui ? resolvedPluginApi.ui : null);
 
     if (!resolvedPluginApi || !resolvedUiApi || typeof resolvedUiApi.onMessage !== 'function') {
