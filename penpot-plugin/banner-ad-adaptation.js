@@ -15,8 +15,10 @@
     'Image_URL',
   ];
   const BASE_PADDING_RATIO = 0.06;
+  const MIN_PADDING_PX = 12;
   const WIDE_ASPECT_THRESHOLD = 2;
   const TALL_ASPECT_THRESHOLD = 1.5;
+  const PILL_RADIUS_DIVISOR = 2;
 
   function parseCsv(csvInput) {
     if (typeof csvInput !== 'string' || csvInput.trim() === '') {
@@ -220,7 +222,7 @@
         width: layout.cta.width,
         height: layout.cta.height,
         fills: [{ color: '#F39C12' }],
-        radius: Math.round(layout.cta.height / 2),
+        radius: Math.round(layout.cta.height / PILL_RADIUS_DIVISOR),
         constraints: layout.cta.constraints,
       });
 
@@ -255,7 +257,7 @@
   }
 
   function calculateAdaptiveLayout(width, height) {
-    const padding = Math.max(12, Math.round(Math.min(width, height) * BASE_PADDING_RATIO));
+    const padding = Math.max(MIN_PADDING_PX, Math.round(Math.min(width, height) * BASE_PADDING_RATIO));
     const isWide = width / height >= WIDE_ASPECT_THRESHOLD;
     const isTall = height / width >= TALL_ASPECT_THRESHOLD;
 
