@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Banner Ad Adaptation &amp; Production</title>
+    <style>
+      body {
+        font-family: Inter, Arial, sans-serif;
+        margin: 0;
+        padding: 16px;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 12px;
+      }
+
+      .field {
+        margin-bottom: 12px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 150px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px;
+        box-sizing: border-box;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        font-size: 12px;
+        resize: vertical;
+      }
+
+      button {
+        background: #2563eb;
+        color: #ffffff;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .status {
+        margin-top: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        display: none;
+      }
+
+      .status.info {
+        background: #dbeafe;
+        color: #1e3a8a;
+        display: block;
+      }
+
+      .status.success {
+        background: #dcfce7;
+        color: #166534;
+        display: block;
+      }
+
+      .status.error {
+        background: #fee2e2;
+        color: #991b1b;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Banner Ad Adaptation &amp; Production</h1>
+
+    <div class="field">
+      <label for="csv-file">Upload CSV</label>
+      <input id="csv-file" type="file" accept=".csv,text/csv" />
+    </div>
+
+    <div class="field">
+      <label for="csv-input">CSV content</label>
+      <textarea id="csv-input" placeholder="Variant_Name,Width,Height,Headline,Subheadline,CTA_Text,Image_URL"></textarea>
+    </div>
+
+    <button id="generate-btn" type="button">Generate Layouts</button>
+    <div class="status" id="status"></div>
+
+    <script>
+      (function () {
+        const fileInput = document.getElementById('csv-file');
+        const csvInput = document.getElementById('csv-input');
+        const generateButton = document.getElementById('generate-btn');
+        const status = document.getElementById('status');
+
+        function setStatus(type, message) {
+          status.className = 'status ' + type;
+          status.textContent = message;
+        }
+
+        fileInput.addEventListener('change', async function (event) {
+          const file = event.target.files && event.target.files[0];
+          if (!file) {
+            return;
+          }
+
+          try {
+            const text = await file.text();
+            csvInput.value = text;
+            setStatus('info', 'CSV loaded. Click "Generate Layouts" to create boards.');
+          } catch (error) {
+            setStatus('error', 'Unable to read file: ' + (error && error.message ? error.message : 'Unknown error'));
+          }
+        });
+
+        generateButton.addEventListener('click', function () {
+          const csv = csvInput.value.trim();
+          if (!csv) {
+            setStatus('error', 'Please upload or paste CSV content first.');
+            return;
+          }
+
+          generateButton.disabled = true;
+          setStatus('info', 'Generating board variants...');
+
+          const message = { type: 'generate-layouts', csv: csv };
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ pluginMessage: message }, '*');
+          }
+
+          if (typeof window.penpot !== 'undefined' && window.penpot.ui && typeof window.penpot.ui.postMessage === 'function') {
+            window.penpot.ui.postMessage(message);
+          }
+        });
+
+        window.addEventListener('message', function (event) {
+          const payload = event && event.data && event.data.pluginMessage ? event.data.pluginMessage : event.data;
+          if (!payload || !payload.type) {
+            return;
+          }
+
+          if (payload.type === 'generate-success') {
+            setStatus('success', 'Done: ' + payload.created + ' board(s) were generated.');
+            generateButton.disabled = false;
+            return;
+          }
+
+          if (payload.type === 'generate-error') {
+            setStatus('error', payload.message || 'Generation failed.');
+            generateButton.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
