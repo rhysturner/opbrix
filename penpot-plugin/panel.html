@@ -116,7 +116,7 @@
             csvInput.value = text;
             setStatus('info', 'CSV loaded. Click "Generate Layouts" to create boards.');
           } catch (error) {
-            setStatus('error', 'Unable to read file: ' + (error?.message ?? 'Unknown error'));
+            setStatus('error', `Unable to read file: ${error?.message ?? 'Unknown error'}`);
           }
         });
 

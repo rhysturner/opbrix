@@ -19,6 +19,8 @@
   const WIDE_ASPECT_THRESHOLD = 2;
   const TALL_ASPECT_THRESHOLD = 1.5;
   const PILL_RADIUS_DIVISOR = 2;
+  const SUBHEADLINE_FONT_RATIO_STANDARD = 0.055;
+  const CTA_FONT_RATIO_STANDARD = 0.05;
 
   function parseCsv(csvInput) {
     if (typeof csvInput !== 'string' || csvInput.trim() === '') {
@@ -56,7 +58,7 @@
       const height = Number(record.Height);
 
       if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
-        throw new Error(`Invalid Width/Height on CSV row ${rowIndex + 2}.`);
+        throw new Error(`Invalid Width/Height on CSV row ${rowIndex + 2}: width=${record.Width}, height=${record.Height}`);
       }
 
       return {
@@ -357,7 +359,7 @@
         y: imageHeight + padding + Math.round(height * 0.15),
         width: width - padding * 2,
         height: Math.round(height * 0.12),
-        fontSize: clamp(Math.round(width * 0.055), 10, 18),
+        fontSize: clamp(Math.round(width * SUBHEADLINE_FONT_RATIO_STANDARD), 10, 18),
         constraints: { horizontal: 'stretch', vertical: 'top' },
       },
       cta: {
@@ -365,7 +367,7 @@
         y: height - padding - clamp(Math.round(height * 0.12), 30, 56),
         width: clamp(Math.round(width * 0.45), 100, 240),
         height: clamp(Math.round(height * 0.12), 30, 56),
-        fontSize: clamp(Math.round(width * 0.05), 10, 18),
+        fontSize: clamp(Math.round(width * CTA_FONT_RATIO_STANDARD), 10, 18),
         constraints: { horizontal: 'left', vertical: 'bottom' },
       },
     };
